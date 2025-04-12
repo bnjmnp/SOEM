@@ -651,7 +651,7 @@ static int ecx_map_coe_soe(ecx_contextt *context, uint16 slave, int thread_n)
    /* execute special slave configuration hook Pre-Op to Safe-OP */
    if(context->slavelist[slave].PO2SOconfig) /* only if registered */
    {
-      context->slavelist[slave].PO2SOconfig(slave);
+      context->slavelist[slave].PO2SOconfig(slave, context->slavelist[slave].user);
    }
    if (context->slavelist[slave].PO2SOconfigx) /* only if registered */
    {
@@ -1218,7 +1218,7 @@ static int ecx_main_config_map_group(ecx_contextt *context, void *pIOmap, uint8 
                      LogAddr++;
                      BitPos = 0;
                   }
-               } 
+               }
 
                diff = LogAddr - oLogAddr;
                oLogAddr = LogAddr;
@@ -1285,7 +1285,7 @@ static int ecx_main_config_map_group(ecx_contextt *context, void *pIOmap, uint8 
             {
 
                ecx_config_create_input_mappings(context, pIOmap, group, slave, &LogAddr, &BitPos);
-               
+
                if (forceByteAlignment)
                {
                   /* Force byte alignment if the input is < 8 bits */
@@ -1294,7 +1294,7 @@ static int ecx_main_config_map_group(ecx_contextt *context, void *pIOmap, uint8 
                      LogAddr++;
                      BitPos = 0;
                   }
-               } 
+               }
 
                diff = LogAddr - oLogAddr;
                oLogAddr = LogAddr;
@@ -1657,7 +1657,7 @@ int ecx_reconfig_slave(ecx_contextt *context, uint16 slave, int timeout)
          /* execute special slave configuration hook Pre-Op to Safe-OP */
          if(context->slavelist[slave].PO2SOconfig) /* only if registered */
          {
-            context->slavelist[slave].PO2SOconfig(slave);
+            context->slavelist[slave].PO2SOconfig(slave, context->slavelist[slave].user);
          }
          if (context->slavelist[slave].PO2SOconfigx) /* only if registered */
          {
