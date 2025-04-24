@@ -1032,9 +1032,9 @@ static void ecx_config_create_input_mappings(ecx_contextt *context, void *pIOmap
    }
    context->slavelist[slave].FMMUunused = FMMUc;
 
-   /* Add one WKC for an input if flag is true */
+   /* Add one WKC for each input segment if flag is true */
    if (AddToInputsWKC)
-      context->grouplist[group].inputsWKC++;
+      context->grouplist[group].inputsWKC += 1 + (FMMUsize / (EC_MAXLRWDATA - EC_FIRSTDCDATAGRAM));
 }
 
 static void ecx_config_create_output_mappings(ecx_contextt *context, void *pIOmap,
@@ -1170,9 +1170,9 @@ static void ecx_config_create_output_mappings(ecx_contextt *context, void *pIOma
       FMMUc++;
    }
    context->slavelist[slave].FMMUunused = FMMUc;
-   /* Add one WKC for an output if flag is true */
+   /* Add one WKC for each output segment if flag is true */
    if (AddToOutputsWKC)
-      context->grouplist[group].outputsWKC++;
+      context->grouplist[group].outputsWKC += 1 + (FMMUsize / (EC_MAXLRWDATA - EC_FIRSTDCDATAGRAM));
 }
 
 static int ecx_main_config_map_group(ecx_contextt *context, void *pIOmap, uint8 group, boolean forceByteAlignment)
