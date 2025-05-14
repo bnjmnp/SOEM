@@ -233,6 +233,8 @@ typedef struct ec_slave
    int              (*PO2SOconfig)(uint16 slave, void *user);
    /** registered configuration function PO->SO */
    int              (*PO2SOconfigx)(ecx_contextt * context, uint16 slave);
+   /** user data for PO2SOconfig */
+   void*            user;
    /** readable name */
    char             name[EC_MAXNAME + 1];
    /* custom info to pass to PO2SO function */
@@ -412,6 +414,10 @@ struct ecx_context
    ec_idxstackT   *idxstack;
    /** reference to ecaterror state */
    boolean        *ecaterror;
+   /** internal, position of DC datagram in process data packet */
+   uint16         DCtO;
+   /** internal, length of DC datagram */
+   uint16         DCl;
    /** reference to last DC time from slaves */
    int64          *DCtime;
    /** internal, SM buffer */
