@@ -88,10 +88,6 @@ extern "C"
 /** default group size in 2^x */
 #define EC_LOGGROUPOFFSET 16
 
-#ifdef USE_SOEM_CONFIG_H
-   #include "soem_config.h"
-#endif
-
 /** definition for frame buffers */
 typedef uint8 ec_bufT[EC_BUFSIZE];
 
