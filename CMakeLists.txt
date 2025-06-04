@@ -10,6 +10,8 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR}/install)
 endif()
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
 set(SOEM_INCLUDE_INSTALL_DIR include/soem)
 set(SOEM_LIB_INSTALL_DIR lib)
 
@@ -28,8 +30,14 @@ if(WIN32)
   elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     link_directories(${CMAKE_CURRENT_LIST_DIR}/oshw/win32/wpcap/Lib)
   endif()
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D _CRT_SECURE_NO_WARNINGS")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  /WX")
+  if(MSVC)  
+    message(STATUS "Win32 MSVC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D _CRT_SECURE_NO_WARNINGS")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  /WX")
+  else()
+    message(STATUS "Win32 non-MSVC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror")
+  endif()
   set(OS_LIBS wpcap.lib Packet.lib Ws2_32.lib Winmm.lib)
 elseif(UNIX AND NOT APPLE)
   set(OS "linux")
@@ -69,11 +77,16 @@ file(GLOB SOEM_HEADERS soem/*.h)
 file(GLOB OSAL_HEADERS osal/osal.h osal/${OS}/*.h)
 file(GLOB OSHW_HEADERS oshw/${OS}/*.h)
 
-add_library(soem STATIC
+add_library(soem
   ${SOEM_SOURCES}
   ${OSAL_SOURCES}
   ${OSHW_SOURCES}
   ${OSHW_EXTRA_SOURCES})
+
+if (BUILD_SHARED_LIBS)
+  set_target_properties(soem PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+endif(BUILD_SHARED_LIBS)
+
 target_link_libraries(soem ${OS_LIBS})
 
 target_include_directories(soem PUBLIC

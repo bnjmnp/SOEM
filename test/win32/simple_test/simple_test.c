@@ -38,7 +38,7 @@ void CALLBACK RTthread(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1
     /* do RT control stuff here */
 }
 
-int EL7031setup(uint16 slave)
+int EL7031setup(uint16 slave, void *not_used)
 {
     int retval;
     uint16 u16val;
@@ -73,7 +73,7 @@ int EL7031setup(uint16 slave)
     return 1;
 }
 
-int AEPsetup(uint16 slave)
+int AEPsetup(uint16 slave, void *not_used)
 {
     int retval;
     uint8 u8val;
@@ -345,12 +345,13 @@ char ifbuf[1024];
 int main(int argc, char *argv[])
 {
    ec_adaptert * adapter = NULL;
+   ec_adaptert * head = NULL;
    printf("SOEM (Simple Open EtherCAT Master)\nSimple test\n");
 
    if (argc > 1)
    {
       /* create thread to handle slave error handling in OP */
-      osal_thread_create(&thread1, 128000, &ecatcheck, (void*) &ctime);
+      osal_thread_create(&thread1, 128000, &ecatcheck, NULL);
       strcpy(ifbuf, argv[1]);
       /* start cyclic part */
       simpletest(ifbuf);
@@ -360,12 +361,13 @@ int main(int argc, char *argv[])
       printf("Usage: simple_test ifname1\n");
    	/* Print the list */
       printf ("Available adapters\n");
-      adapter = ec_find_adapters ();
+      head = adapter = ec_find_adapters ();
       while (adapter != NULL)
       {
          printf ("Description : %s, Device to use for wpcap: %s\n", adapter->desc,adapter->name);
          adapter = adapter->next;
       }
+      ec_free_adapters(adapter);
    }
 
    printf("End program\n");

@@ -119,6 +119,8 @@ typedef struct ec_slave
    uint32           eep_id;
    /** revision from EEprom */
    uint32           eep_rev;
+   /** serial number from EEprom */
+   uint32           eep_sn;
    /** Interface type */
    uint16           Itype;
    /** Device type */
@@ -228,13 +230,15 @@ typedef struct ec_slave
    /** Boolean for tracking whether the slave is (not) responding, not used/set by the SOEM library */
    boolean          islost;
    /** registered configuration function PO->SO, (DEPRECATED)*/
-   int              (*PO2SOconfig)(uint16 slave, void* user);
+   int              (*PO2SOconfig)(uint16 slave, void *user);
    /** registered configuration function PO->SO */
    int              (*PO2SOconfigx)(ecx_contextt * context, uint16 slave);
    /** user data for PO2SOconfig */
    void*            user;
    /** readable name */
    char             name[EC_MAXNAME + 1];
+   /* custom info to pass to PO2SO function */
+   void *user;
 } ec_slavet;
 
 /** for list of ethercat slave groups */
@@ -432,7 +436,7 @@ struct ecx_context
    int            (*EOEhook)(ecx_contextt * context, uint16 slave, void * eoembx);
    /** flag to control legacy automatic state change or manual state change */
    int            manualstatechange;
-   /** userdata, promotes application configuration esp. in EC_VER2 with multiple 
+   /** userdata, promotes application configuration esp. in EC_VER2 with multiple
     * ec_context instances. Note: userdata memory is managed by application, not SOEM */
    void           *userdata;
 };

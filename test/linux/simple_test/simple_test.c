@@ -24,6 +24,7 @@ boolean needlf;
 volatile int wkc;
 boolean inOP;
 uint8 currentgroup = 0;
+boolean forceByteAlignment = FALSE;
 
 void simpletest(char *ifname)
 {
@@ -44,7 +45,14 @@ void simpletest(char *ifname)
       {
          printf("%d slaves found and configured.\n",ec_slavecount);
 
-         ec_config_map(&IOmap);
+         if (forceByteAlignment)
+         {
+            ec_config_map_aligned(&IOmap);
+         }
+         else
+         {
+            ec_config_map(&IOmap);
+         }
 
          ec_configdc();
 
@@ -227,24 +235,24 @@ int main(int argc, char *argv[])
    if (argc > 1)
    {
       /* create thread to handle slave error handling in OP */
-//      pthread_create( &thread1, NULL, (void *) &ecatcheck, (void*) &ctime);
-      osal_thread_create(&thread1, 128000, &ecatcheck, (void*) &ctime);
+      osal_thread_create(&thread1, 128000, &ecatcheck, NULL);
       /* start cyclic part */
       simpletest(argv[1]);
    }
    else
    {
       ec_adaptert * adapter = NULL;
+      ec_adaptert * head = NULL;
       printf("Usage: simple_test ifname1\nifname = eth0 for example\n");
 
       printf ("\nAvailable adapters:\n");
-      adapter = ec_find_adapters ();
+      head = adapter = ec_find_adapters ();
       while (adapter != NULL)
       {
          printf ("    - %s  (%s)\n", adapter->name, adapter->desc);
          adapter = adapter->next;
       }
-      ec_free_adapters(adapter);
+      ec_free_adapters(head);
    }
 
    printf("End program\n");
