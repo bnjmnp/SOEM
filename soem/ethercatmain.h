@@ -237,8 +237,6 @@ typedef struct ec_slave
    void*            user;
    /** readable name */
    char             name[EC_MAXNAME + 1];
-   /* custom info to pass to PO2SO function */
-   void *user;
 } ec_slavet;
 
 /** for list of ethercat slave groups */
